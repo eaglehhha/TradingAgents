@@ -1,0 +1,34 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*' # 核心触发条件：只有当推送以 "v" 开头的 Tag (如 v0.3.0) 时才会执行
+
+jobs:
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # 必须显式声明写入权限，否则 GitHub Actions 无法创建 Release
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true # 自动根据合并的 Pull Request 生成发布说明
+          # 如果有编译好的产物（比如可执行文件），可以取消下面这行的注释并修改路径
+          # files: dist/* ```
+
+### 这个配置将如何改变您的工作流？
+
+配置好这个文件并推送到 `main` 分支后，您以后发布新版本的操作将变得非常简单：
+
+1. **提交代码：** 像往常一样修改代码，提交 `chore: release v0.3.0`。
+2. **打上标签并推送：**
+   ```bash
+   git tag v0.3.0
+   git push origin v0.3.0
